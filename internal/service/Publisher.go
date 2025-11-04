@@ -7,7 +7,7 @@ import (
 )
 
 type Publisher interface {
-	Publish(author string, text string) error
+	Publish(author string, text string) (models.Post, error)
 	GetFeed() []models.Post
 } // спросить у бадди верно ли что данный интерфейс вообще нужно объявить в ручке а здесь просто писать его имплементацию
 
