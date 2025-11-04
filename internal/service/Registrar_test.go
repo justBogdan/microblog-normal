@@ -1,6 +1,7 @@
 package service
 
 import (
+	"microblog-normal/internal/mocks"
 	"microblog-normal/internal/models"
 	"microblog-normal/internal/repositories"
 	"testing"
@@ -9,21 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type mocUserRepository struct {
-	mock.Mock
-}
-
-func (mr *mocUserRepository) FindByNick(nickname string) (models.User, error) {
-	args := mr.Called(nickname)
-	return args.Get(0).(models.User), args.Error(1)
-}
-
-func (mr *mocUserRepository) CreateUser(user *models.User) error {
-	args := mr.Called(user)
-	return args.Error(0)
-}
 func TestRegistrar_Register_unique_user(t *testing.T) {
-	mocRepo := new(mocUserRepository)
+	mocRepo := new(mocks.MocUserRepository)
 	mocRepo.On("CreateUser", mock.Anything).Return(nil)
 	mocRepo.On("FindByNick", "Sonya").Return(models.User{}, repositories.ErrUserNotFound)
 	registrar := NewRegistrar(mocRepo)
@@ -34,7 +22,7 @@ func TestRegistrar_Register_unique_user(t *testing.T) {
 }
 
 func TestRegistrar_Register_ExistUser(t *testing.T) {
-	mocRepo := new(mocUserRepository)
+	mocRepo := new(mocks.MocUserRepository)
 	mocRepo.On("CreateUser", mock.Anything).Return(nil)
 	mocRepo.On("FindByNick", "Sonya").Return(models.User{"Sonya", 0}, nil)
 	registrar := NewRegistrar(mocRepo)
